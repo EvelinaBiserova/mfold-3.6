@@ -1,7 +1,7 @@
 # mfold-3.6
 http://www.unafold.org/mfold/software/download-mfold.php
 
-# Prerequesites:
+# Prerequisites:
  * Ubuntu
    * Install gfortran, g++, make
 
