@@ -27,3 +27,4 @@ http://www.unafold.org/mfold/software/download-mfold.php
 ###### Todo
  * Add chmod for scripts in git
  * -std=c++98 or -static? Why is this enough? Where is the difference?
+ * Spaces in path don't work
