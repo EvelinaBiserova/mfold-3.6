@@ -15,7 +15,7 @@ c     -----------------------------------------------------------------
       common /block2/salt_corr1,salt_corr2
       common /block3/temper
       
-      call testdate
+c     call testdate
       call system('(MFLD_PATH=$(which mfold); MFLD_PATH=$(dirname "${MFLD_PATH// /\ }"); eval command cd "$(echo "$MFLD_PATH")/../share/mfold" && pwd) > mfold_path.txt')
       open(15,file='mfold_path.txt',status='old',err=99)
       read (15,915) cur_executable_path      
@@ -166,12 +166,12 @@ c     Assigns the filenames of the input files
       as1hfile(10:12) = hsuffix
       
 c     Get path for energy files
-      path = trim(cur_executable_path)//'/ '
+      path = trim(cur_executable_path)//'/:'
       
 c     Opens input files
-      open(10,file=path(1:index(path,' ')-1)//as1gfile,status='old',
+      open(10,file=path(1:index(path,':')-1)//as1gfile,status='old',
      .     err=91)
-      open(20,file=path(1:index(path,' ')-1)//as1hfile,status='old',
+      open(20,file=path(1:index(path,':')-1)//as1hfile,status='old',
      .     err=91)
       
 c     Reads headers and data from asint1x2.dg(d)
@@ -425,10 +425,10 @@ c     Dangles
       read (hsuffix(1:3),1020) enthpyin(8:10)
       
 c     Set path for energy files
-      path = trim(cur_executable_path)//'/ '
-      open(60,file=path(1:index(path,' ')-1)//freein,status='old',
+      path = trim(cur_executable_path)//'/:'
+      open(60,file=path(1:index(path,':')-1)//freein,status='old',
      .     err=93)
-      open(70,file=path(1:index(path,' ')-1)//enthpyin,status='old',
+      open(70,file=path(1:index(path,':')-1)//enthpyin,status='old',
      .     err=93)
       
 c     Reads in data from dangle.dg(d) -- free energies
@@ -541,8 +541,8 @@ c--------------------------------------------------------------------
       read (gsuffix(1:3),2020)gfile(6:8)
       
 c     Set path for energy files
-      path = trim(cur_executable_path)//'/ '
-      open(80,file=path(1:index(path,' ')-1)//gfile,status='old',err=96)
+      path = trim(cur_executable_path)//'/:'
+      open(80,file=path(1:index(path,':')-1)//gfile,status='old',err=96)
       
 c     Reads in data from loop.dg(d)
       i = 1
@@ -652,9 +652,9 @@ c     Opens and reads in data from miscloop.dg(d)
       read (hsuffix(1:3),4020)hfile(10:12)
       
 c     Set path for energy files
-      path = trim(cur_executable_path)//'/ '
-      open(85,file=path(1:index(path,' ')-1)//gfile,status='old',err=98)
-      open(87,file=path(1:index(path,' ')-1)//hfile,status='old',err=99)
+      path = trim(cur_executable_path)//'/:'
+      open(85,file=path(1:index(path,':')-1)//gfile,status='old',err=98)
+      open(87,file=path(1:index(path,':')-1)//hfile,status='old',err=99)
       
       i=0
       do while(index(text(1,i),'-->').eq.0)
@@ -834,9 +834,9 @@ c----------------------------------------------------------------------
       read (hsuffix(1:3),3020)hfile(7:9)
       
 c     Set path for energy files
-      path = trim(cur_executable_path)//'/ '
-      open(82,file=path(1:index(path,' ')-1)//gfile,status='old',err=98)
-      open(83,file=path(1:index(path,' ')-1)//hfile,status='old',err=99)
+      path = trim(cur_executable_path)//'/:'
+      open(82,file=path(1:index(path,':')-1)//gfile,status='old',err=98)
+      open(83,file=path(1:index(path,':')-1)//hfile,status='old',err=99)
       
 c     Reads in data from sint2.dg(d)
       i=0
@@ -949,9 +949,9 @@ c     Opens sint4.dg(d) and sint4.dh(d) data files
       read (hsuffix(1:3),5020)hfile(7:9)
       
 c     Set path for energy files
-      path = trim(cur_executable_path)//'/ '
-      open(10,file=path(1:index(path,' ')-1)//gfile,status='old',err=91)
-      open(20,file=path(1:index(path,' ')-1)//hfile,status='old',err=92)
+      path = trim(cur_executable_path)//'/:'
+      open(10,file=path(1:index(path,':')-1)//gfile,status='old',err=91)
+      open(20,file=path(1:index(path,':')-1)//hfile,status='old',err=92)
       
 c     Reads in data and headers from sint4.dg(d)
       
@@ -1209,9 +1209,9 @@ c-----------------------------------------------------------------------
       hfile(7:9) = hsuffix
       
 c     Set path for energy files
-      path = trim(cur_executable_path)//'/ '
-      open(10,file=path(1:index(path,' ')-1)//gfile,status='old',err=91)
-      open(20,file=path(1:index(path,' ')-1)//hfile,status='old',err=92)
+      path = trim(cur_executable_path)//'/:'
+      open(10,file=path(1:index(path,':')-1)//gfile,status='old',err=91)
+      open(20,file=path(1:index(path,':')-1)//hfile,status='old',err=92)
       
 c     Read in headers and then data from stack.dg(d)
       itemp=0
@@ -1334,9 +1334,9 @@ c-----------------------------------------------------------------
       hfile(7:9) = hsuffix
       
 c     Set path for energy files
-      path = trim(cur_executable_path)//'/ '
-      open(10,file=path(1:index(path,' ')-1)//gfile,status='old',err=91)
-      open(20,file=path(1:index(path,' ')-1)//hfile,status='old',err=92)
+      path = trim(cur_executable_path)//'/:'
+      open(10,file=path(1:index(path,':')-1)//gfile,status='old',err=91)
+      open(20,file=path(1:index(path,':')-1)//hfile,status='old',err=92)
       
 c     Reads in headers and data from tloop.dg(d)
       itemp=0
@@ -1424,9 +1424,9 @@ c--------------------------------------------------------------------
       hfile(9:11) = hsuffix
       
 c     Set path for energy files
-      path = trim(cur_executable_path)//'/ '
-      open(10,file=path(1:index(path,' ')-1)//gfile,status='old',err=91)
-      open(20,file=path(1:index(path,' ')-1)//hfile,status='old',err=92)
+      path = trim(cur_executable_path)//'/:'
+      open(10,file=path(1:index(path,':')-1)//gfile,status='old',err=91)
+      open(20,file=path(1:index(path,':')-1)//hfile,status='old',err=92)
       
 c     Reads in headings and data from triloop.dg(d)
       itemp=0
@@ -1529,10 +1529,10 @@ c     enddo
          hfile(9:11) = hsuffix
          
 c     Set path for energy files
-         path = trim(cur_executable_path)//'/ '
-         open(10,file=path(1:index(path,' ')-1)//gfile,status='old',
+         path = trim(cur_executable_path)//'/:'
+         open(10,file=path(1:index(path,':')-1)//gfile,status='old',
      .        err=91)
-         open(20,file=path(1:index(path,' ')-1)//hfile,status='old',
+         open(20,file=path(1:index(path,':')-1)//hfile,status='old',
      .        err=92)
          
 c     Reads in data from tstacki.dg(d) or tstackh.dg(d)
