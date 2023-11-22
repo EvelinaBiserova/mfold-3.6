@@ -567,8 +567,8 @@ if [ $? -eq 0 ] ; then
 	$SIR_GRAPH $FLAG -ss $PREF >> $LOGFILE 2>&1
 	$SIR_GRAPH $FLAG -p $PREF >> $LOGFILE 2>&1
 	$SIR_GRAPH $FLAG -png $X $PREF >> $LOGFILE 2>&1
-	gs -sDEVICE=png16m  -dBATCH -dNOPAUSE -dSAFER -dUseCropBox -dEPSCrop -dQUIET -sFONTPATH=$(cd $(dirname $0)/../../usr/share/fonts/type1/urw-base35 && pwd) -sOutputFile=$PREF.png $PREF.ps
-	epstopdf ${PREF}.ps || convert ${PREF}.ps ${PREF}.pdf
+	gs -sDEVICE=png16m  -dBATCH -dNOPAUSE -dSAFER -dUseCropBox -dEPSCrop -dQUIET -sOutputFile=$PREF.png $PREF.ps
+	#epstopdf ${PREF}.ps || convert ${PREF}.ps ${PREF}.pdf
     done
     echo -e '\nStructure plots generated.'
 else
