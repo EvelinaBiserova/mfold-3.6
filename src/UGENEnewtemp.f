@@ -15,13 +15,13 @@ c     -----------------------------------------------------------------
       common /block2/salt_corr1,salt_corr2
       common /block3/temper
       
-c     call testdate
-      call system('(cd $(dirname $(which mfold))/../share/mfold && pwd) > mfold_path.txt')
-      open(15,file='mfold_path.txt',status='old',
-     .     err=99)
-      read (15,915) cur_executable_path
-      call system('rm mfold_path.txt')
-      
+      call testdate
+      call system('(MFLD_PATH=$(which mfold); MFLD_PATH=$(dirname "${MFLD_PATH// /\ }"); eval command cd "$(echo "$MFLD_PATH")/../share/mfold" && pwd) > mfold_path.txt')
+      open(15,file='mfold_path.txt',status='old',err=99)
+      read (15,915) cur_executable_path      
+      write (6,*) cur_executable_path
+      call system('rm mfold_path.txt')	
+
       call getarg(1,acid)
       call getarg(2,chtemp)
       call getarg(3,naconc)
@@ -32,7 +32,7 @@ c     call testdate
  905  format(a10)
  910  format(i3)
  915  format(a4096)
-      
+
 c     If nucleic acid type not entered in command line, ask user
       if ((index(acid,'DNA').eq.0.and.index(acid,'dna').eq.0).and.
      .     (index(acid,'RNA').eq.0.and.index(acid,'rna').eq.0)) then
@@ -132,13 +132,13 @@ c     Terminal stacking energies (hairpin loops and internal loops)
       call tstack(cur_executable_path)
       
       stop
- 99   write (6,*) 'Error opening "tmp" input data file(s)'
+ 99   write (6,*) 'Error opening file "tmp" input data file(s)'
       call exit(1)
       end
 c----------------------------------------------------------------------
       subroutine asint1x2(cur_executable_path)
       
-      character cur_executable_path*4096, as1gfile*12, as1hfile*12, path*256, a1header(50)*70,
+      character cur_executable_path*4096,as1gfile*12, as1hfile*12, path*4096, a1header(50)*70,
      .     a1tables(24,0:30)*144, rowdown*20, a1outfile*12, row*20
       integer itemp,jtemp,iptemp
       real ra1garray(24,4,24),ra1harray(24,4,24),ras1out(24,4,24)
@@ -167,8 +167,7 @@ c     Assigns the filenames of the input files
       
 c     Get path for energy files
       path = trim(cur_executable_path)//'/ '
-      write(6, *) path
-      write(6, *) path(1:index(path,' ')-1)//as1gfile
+      
 c     Opens input files
       open(10,file=path(1:index(path,' ')-1)//as1gfile,status='old',
      .     err=91)
@@ -266,7 +265,7 @@ c     Writes the calculated, numerical output to the output file
       
       return
       
- 91   write (6,*) '!!!Error opening asint1x2.__ input data file(s)'
+ 91   write (6,*) 'Error opening asint1x2.__ input data file(s)'
       call exit(1)
       end
       
@@ -301,7 +300,7 @@ c     Asymmetric interior 2 x 3
       as2hfile(10:12) = hsuffix
       
 c     Set path for energy files
-      path = '/usr/share/mfold/ '
+      path = '/usr/local/share/mfold/ '
       open(30,file=path(1:index(path,' ')-1)//as2gfile,status='old',
      .     err=92)
       open(40,file=path(1:index(path,' ')-1)//as2hfile,status='old',
@@ -400,7 +399,7 @@ c--------------------------------------------------------------------
 c     Dangles
       subroutine dangle(cur_executable_path)
       
-      character cur_executable_path*4096, freein*10, enthpyin*10, path*256, rowheader(8,0:15)*96,
+      character cur_executable_path*4096, freein*10, enthpyin*10, path*4096, rowheader(8,0:15)*96,
      .     rowskip*20, outfile*10, freeen(8,16)*6, enthalpies(8,16)*6,
      .     output(8,16)*6
       integer itemp,jtemp
@@ -520,7 +519,7 @@ c     Check for overflow
 c--------------------------------------------------------------------
       subroutine loop(cur_executable_path)
       
-      character cur_executable_path*4096, header(20)*70, gfile*8, path*256, outchar(100,3)*6,
+      character cur_executable_path*4096, header(20)*70, gfile*8, path*4096, outchar(100,3)*6,
      .     outfile*8, fechars(100,3)*6, numrow*70
       integer i,j,max
       real fenums(100,3),outnum
@@ -619,7 +618,7 @@ c     Writes the output to loop."temper"
 c----------------------------------------------------------------------
       subroutine miscloop(cur_executable_path)
       
-      character cur_executable_path*4096, gfile*12, hfile*12, text(12,0:10)*72, temp*72, path*256,
+      character cur_executable_path*4096, gfile*12, hfile*12, text(12,0:10)*72, temp*72, path*4096,
      .     outfile*12
       integer i, case, gail, tempi
       real energy(18), enthalpy(18), output(18)
@@ -811,7 +810,7 @@ c     Writes the output data to the output file
 c----------------------------------------------------------------------
       subroutine sint2(cur_executable_path)
       
-      character cur_executable_path*4096, mainheader(20)*50, temp*50, path*256,
+      character cur_executable_path*4096, mainheader(20)*50, temp*50, path*4096,
      .     tbleheader(6,0:30)*144, gfile*9, hfile*9, outfile*9
       integer i,j,k
       real fearray(6,4,24), harray(6,4,24), output(6,4,24)
@@ -926,7 +925,7 @@ c-------------------------------------------------------------------
       subroutine sint4(cur_executable_path)
       
       character cur_executable_path*4096, mainheader(60)*96,tableheader(36,0:25)*96,temp*96,
-     .     path*256,outfile*9,gfile*9,hfile*9
+     .     path*4096,outfile*9,gfile*9,hfile*9
       integer itemp,jtemp,ktemp
       real output(36,16,16),garray(36,16,16),harray(36,16,16)
       
@@ -1083,7 +1082,7 @@ c---------------------------------------------------------------------
       hfile(7:9) = hsuffix
       
 c     Set path for energy files
-      path = '/usr/share/mfold/ '
+      path = '/usr/local/share/mfold/ '
       open(10,file=path(1:index(path,' ')-1)//gfile,status='old',err=91)
       open(20,file=path(1:index(path,' ')-1)//hfile,status='old',err=92)
       
@@ -1184,7 +1183,7 @@ c     Calculates the free energy at the specified temperature
 c-----------------------------------------------------------------------
       subroutine stack(cur_executable_path)
       
-      character cur_executable_path*4096, temp*20, gfile*9, hfile*9, path*256, mainheader(50)*96,
+      character cur_executable_path*4096, temp*20, gfile*9, hfile*9, path*4096, mainheader(50)*96,
      .     tbleheader(0:4,0:30)*96, outfile*9, outchar(4,4,16)*6,
      .     gcharray(4,4,16)*6, hcharray(4,4,16)*6
       integer itemp,jtemp,ktemp
@@ -1312,7 +1311,7 @@ c-----------------------------------------------------------------
       subroutine tloop(cur_executable_path)
       
       character cur_executable_path*4096, temp*15,gfile*9,hfile*9,
-     .     path*256,outfile*9,header(10)*15,sequence(200)*8
+     .     path*4096,outfile*9,header(10)*15,sequence(200)*8
       integer itemp,counter
       real garray(200),harray(200),output(200)
       
@@ -1401,8 +1400,8 @@ c     Calculates the free energies at the specified temperature
 c--------------------------------------------------------------------
       subroutine triloop(cur_executable_path)
       
-      character cur_executable_path*4096, temp*8,gfile*11,hfile*11,outfile*11,
-     .     path*256,header(10)*15,sequence(50)*8
+      character cur_executable_path*4096,temp*8,gfile*11,hfile*11,outfile*11,
+     .     path*4096,header(10)*15,sequence(50)*8
       integer itemp,counter
       real garray(50),harray(50),output(50)
       
@@ -1491,8 +1490,8 @@ c     Writes output to output file
       end
 c-----------------------------------------------------------------
       subroutine tstack(cur_executable_path)
-      character cur_executable_path*4096, tbleheader(0:6,0:20)*96, header(40)*96, gfile*11,
-     .     hfile*11, path*256, outfile*11, outchar(4,4,16)*6, name*8,
+      character cur_executable_path*4096,tbleheader(0:6,0:20)*96, header(40)*96, gfile*11,
+     .     hfile*11, path*4096, outfile*11, outchar(4,4,16)*6, name*8,
      .     rowtemp*96, gcharray(4,4,16)*6, hcharray(4,4,16)*6
       integer itemp, jtemp, ktemp, flag
       real outnum, gnum, hnum
