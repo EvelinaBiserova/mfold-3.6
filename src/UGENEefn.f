@@ -53,9 +53,8 @@ c     Read energy information
 c
 
  915  format(a4096)
-      call system('(cd $(dirname $(which mfold))/../share/mfold && pwd) > mfold_path.txt')
-      open(15,file='mfold_path.txt',status='old',
-     .     err=99)
+      call system('(MFLD_PATH=$(which mfold); MFLD_PATH=$(dirname "${MFLD_PATH// /\ }"); eval command cd "$(echo "$MFLD_PATH")/../share/mfold" && pwd) > mfold_path.txt')
+      open(15,file='mfold_path.txt',status='old',err=99)
       read (15,915) cur_executable_path
       call system('rm mfold_path.txt')
 
@@ -219,7 +218,7 @@ c
       call exit(1)
 c
 999   stop
- 99   write (6,*) 'Error opening "tmp" input data file(s)'
+ 99   write (6,*) 'Error opening file "tmp" input data file(s)'
       call exit(1)
       end
  
@@ -862,17 +861,17 @@ c     Used in reading the energy files.
 c     Reads energy file names and open the files for reading.
       subroutine enefiles(cur_executable_path)
       include 'efn.inc'
-      character filen*80,path*4056, cur_executable_path*4056
+      character*80 filen,path*4056, cur_executable_path*4056
  
 c     Get path for energy files
-      path = trim(cur_executable_path)//'/../../share/mfold/ '
+      path = trim(cur_executable_path)//'/:'
  3    write(6,*) 'Enter asymmetric interior loop of size 3 energy file name'
       write(6,*) '(default asint1x2.dat)'
       read (5,100,end=1) filen
       if (filen.eq.'         ') filen = 'asint1x2.dat'
       open(8,file=filen,status='old',err=4)
       goto 5
- 4    open(8,file=path(1:index(path,' ')-1)//filen,status='old',err=3)
+ 4    open(8,file=path(1:index(path,':')-1)//filen,status='old',err=3)
 
  5    write(6,*) 'Enter asymmetric interior loop of size 5 energy file name'
       write(6,*) '(default asint2x3.dat)'
@@ -880,28 +879,28 @@ c     Get path for energy files
       if (filen.eq.'         ') filen = 'asint2x3.dat'
 c      open(9,file=filen,status='old',err=6)
       goto 10
-c 6    open(9,file=path(1:index(path,' ')-1)//filen,status='old',err=5)
+c 6    open(9,file=path(1:index(path,':')-1)//filen,status='old',err=5)
 
 10    write(6,*) 'Enter dangle energy file name (default dangle.dat)'
       read (5,100,end=1) filen
       if (filen.eq.'         ') filen = 'dangle.dat'
       open(10,file=filen,status='old',err=11)
       goto 20
-11    open(10,file=path(1:index(path,' ')-1)//filen,status='old',err=10)
+11    open(10,file=path(1:index(path,':')-1)//filen,status='old',err=10)
  
 20    write(6,*) 'Enter loop energy file name (default loop.dat)'
       read (5,100,end=1) filen
       if (filen.eq.'         ') filen = 'loop.dat'
       open(11,file=filen,status='old',err=21)
       goto 25
-21    open(11,file=path(1:index(path,' ')-1)//filen,status='old',err=20)
+21    open(11,file=path(1:index(path,':')-1)//filen,status='old',err=20)
  
 25    write(6,*) 'Enter misc. loop energy file name (default miscloop.dat)'
       read (5,100,end=1) filen
       if (filen.eq.'         ') filen = 'miscloop.dat'
       open(32,file=filen,status='old',err=26)
       goto 30
-26    open(32,file=path(1:index(path,' ')-1)//filen,status='old',err=25)
+26    open(32,file=path(1:index(path,':')-1)//filen,status='old',err=25)
  
 30    write(6,*)'Enter symmetric interior loop of size 2 energy file'
       write(6,*)' name (default sint2.dat)'
@@ -909,7 +908,7 @@ c 6    open(9,file=path(1:index(path,' ')-1)//filen,status='old',err=5)
       if(filen.eq.'         ')filen='sint2.dat'
       open(33,file=filen,status='old',err=31)
       goto 35
-31    open(33,file=path(1:index(path,' ')-1)//filen,status='old',err=30)
+31    open(33,file=path(1:index(path,':')-1)//filen,status='old',err=30)
 
 35    write(6,*)'Enter symmetric interior loop of size 4 energy file'
       write(6,*)' name (default sint4.dat)'
@@ -917,7 +916,7 @@ c 6    open(9,file=path(1:index(path,' ')-1)//filen,status='old',err=5)
       if(filen.eq.'         ')filen='sint4.dat'
       open(34,file=filen,status='old',err=36) 
       goto 37
-36    open(34,file=path(1:index(path,' ')-1)//filen,status='old',err=35)
+36    open(34,file=path(1:index(path,':')-1)//filen,status='old',err=35)
 
 37    write(6,*)'Enter symmetric interior loop of size 6 energy file'
       write(6,*)' name (default sint6.dat)'
@@ -925,42 +924,42 @@ c 6    open(9,file=path(1:index(path,' ')-1)//filen,status='old',err=5)
       if(filen.eq.'         ')filen='sint6.dat'
 c      open(35,file=filen,status='old',err=38)
       goto 40
-c38    open(35,file=path(1:index(path,' ')-1)//filen,status='old',err=37)
+c38    open(35,file=path(1:index(path,':')-1)//filen,status='old',err=37)
  
 40    write(6,*) 'Enter stack energy file name (default stack.dat)'
       read (5,100,end=1) filen
       if (filen.eq.'         ') filen = 'stack.dat'
       open(12,file=filen,status='old',err=41)
       goto 45
-41    open(12,file=path(1:index(path,' ')-1)//filen,status='old',err=40)
+41    open(12,file=path(1:index(path,':')-1)//filen,status='old',err=40)
 
 45    write(6,*) 'Enter tetraloop energy file name (default tloop.dat)'
       read (5,100,end=1) filen
       if (filen.eq.'         ') filen = 'tloop.dat'
       open(29,file=filen,status='old',err=46)
       goto 47
-46    open(29,file=path(1:index(path,' ')-1)//filen,status='old',err=45)
+46    open(29,file=path(1:index(path,':')-1)//filen,status='old',err=45)
 
 47    write(6,*) 'Enter triloop energy file name (default triloop.dat)'
       read(5,100,end=1) filen
       if (filen.eq.'         ') filen = 'triloop.dat'
       open(39,file=filen,status='old',err=48)
       goto 50
-48    open(39,file=path(1:index(path,' ')-1)//filen,status='old',err=47)
+48    open(39,file=path(1:index(path,':')-1)//filen,status='old',err=47)
  
 50    write(6,*)'Enter tstackh energy file name (default tstackh.dat)'
       read(5,100,end=1)filen
       if(filen.eq.'         ') filen = 'tstackh.dat'
       open(13,file=filen,status='old',err=51)
       goto 55
-51    open(13,file=path(1:index(path,' ')-1)//filen,status='old',err=50)
+51    open(13,file=path(1:index(path,':')-1)//filen,status='old',err=50)
  
 55    write(6,*) 'Enter tstacki energy file name (default tstacki.dat)'
       read (5,100,end=1) filen
       if (filen.eq.'         ') filen = 'tstacki.dat'
       open(14,file=filen,status='old',err=56)
       goto 2
-56    open(14,file=path(1:index(path,' ')-1)//filen,status='old',err=55)
+56    open(14,file=path(1:index(path,':')-1)//filen,status='old',err=55)
  
 100   format(a40)
       goto 2
