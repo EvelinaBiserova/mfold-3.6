@@ -4439,6 +4439,7 @@ void push_out_first_loop(int loop_num, int domain_end, int domain_start,
       base = connected_to - 1;
     } else
       base--;
+    if (!base) return;
     if (g_connected[base] > domain_start) {
       if (!g_counter_clockwise)
 	angle = g_structure_angle[base] + PI / 2.;
@@ -4818,6 +4819,7 @@ void fix_loop_adjust_pieces(int loop_num, int domain_start, int domain_end,
     dif = distance_bases - dif;
     dif_y = dif * sin(original_incoming_angle);
     dif_x = dif * cos(original_incoming_angle);
+    if (lhp1_i <= 0) return;
     if (g_connected[lhp1_i] > 0)
       base = g_connected[lhp1_i] + 1;
     else {
